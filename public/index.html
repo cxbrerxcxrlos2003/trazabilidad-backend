@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asociación Charolais - Sistema de Trazabilidad Bovina</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #d4ac0d; /* Tono dorado/charolais */
+            --success-color: #27ae60;
+            --bg-color: #f8f9fa;
+            --dark-text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Sistema de Pestañas */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            background-color: #fff;
+            border-bottom: 3px solid var(--accent-color);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Formularios y Paneles */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .panel-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f1f3f5;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.65rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Tablas de Datos */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.92rem;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover { background-color: #f8fafc; }
+
+        .status-indicator {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Asociación Charolais 🐂 Sistema Integral de Trazabilidad</h1>
+        <div id="connection-status" style="font-size: 0.9rem; font-weight: bold; color: var(--accent-color);">Conectando Arquitectura...</div>
+    </header>
+
+    <div class="container">
+        <!-- Pestañas de Navegación -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('trazabilidad')">📡 Trazabilidad IoT</button>
+            <button class="tab-btn" onclick="switchTab('propietarios')">👥 Propietarios</button>
+            <button class="tab-btn" onclick="switchTab('fincas')">🏡 Fincas</button>
+            <button class="tab-btn" onclick="switchTab('vacunas')">💉 Vacunas e Historial</button>
+        </div>
+
+        <!-- PESTAÑA 1: TRAZABILIDAD BOVINA -->
+        <div id="trazabilidad" class="tab-content active">
+            <div class="panel-grid">
+                <div class="card">
+                    <h2>Registrar Telemetría / Collar</h2>
+                    <form id="form-trazabilidad" onsubmit="postData(event, 'trazabilidad')">
+                        <div class="form-group">
+                            <label>ID del Dispositivo (SIM808)</label>
+                            <input type="text" id="tra-dispositivo" placeholder="Ej: COLLAR_CH01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Código del Bovino (Arete)</label>
+                            <input type="text" id="tra-bovino" placeholder="Ej: CHA-2026-09" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Latitud</label>
+                            <input type="number" step="any" id="tra-lat" placeholder="Ej: -1.2494" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Longitud</label>
+                            <input type="number" step="any" id="tra-lng" placeholder="Ej: -78.5801" required>
+                        </div>
+                        <button type="submit" style="background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer;">Enviar Trama a Render</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Datos de Ubicación y Monitoreo en Tiempo Real</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dispositivo</th>
+                                    <th>Bovino</th>
+                                    <th>Latitud</th>
+                                    <th>Longitud</th>
+                                    <th>Último Envío</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-trazabilidad">
+                                <!-- Carga dinámica -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA 2: PROPIETARIOS -->
+        <div id="propietarios" class="tab-content">
+            <div class="panel-grid">
+                <div class="card">
+                    <h2>Registrar Ganadero</h2>
+                    <form id="form-propietarios" onsubmit="postData(event, 'propietarios')">
+                        <div class="form-group">
+                            <label>Cédula / RUC</label>
+                            <input type="text" id="prop-cedula" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="prop-nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono de Contacto</label>
+                            <input type="text" id="prop-telefono">
+                        </div>
+                        <button type="submit" style="background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer;">Guardar Propietario</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Socios de la Asociación Charolais</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-propietarios">
+                                <!-- Carga dinámica -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA 3: FINCAS -->
+        <div id="fincas" class="tab-content">
+            <div class="panel-grid">
+                <div class="card">
+                    <h2>Registrar Predio / Finca</h2>
+                    <form id="form-fincas" onsubmit="postData(event, 'fincas')">
+                        <div class="form-group">
+                            <label>Nombre de la Finca</label>
+                            <input type="text" id="finca-nombre" placeholder="Ej: Hacienda El Rocío" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ubicación / Cantón</label>
+                            <input type="text" id="finca-ubicacion" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Propietario Responsable</label>
+                            <select id="finca-propietario">
+                                <option value="1">Cargando propietarios...</option>
+                            </select>
+                        </div>
+                        <button type="submit" style="background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer;">Registrar Finca</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Fincas Registradas bajo Control Operativo</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre Finca</th>
+                                    <th>Ubicación</th>
+                                    <th>Propietario</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-fincas">
+                                <!-- Carga dinámica -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA 4: VACUNAS -->
+        <div id="vacunas" class="tab-content">
+            <div class="panel-grid">
+                <div class="card">
+                    <h2>Control Sanitario Bovino</h2>
+                    <form id="form-vacunas" onsubmit="postData(event, 'vacunas')">
+                        <div class="form-group">
+                            <label>Código del Bovino</label>
+                            <input type="text" id="vac-bovino" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Vacuna / Tratamiento</label>
+                            <select id="vac-tipo">
+                                <option value="Fiebre Aftosa">Fiebre Aftosa</option>
+                                <option value="Brucelosis">Brucelosis</option>
+                                <option value="Carbón Sintomático">Carbón Sintomático</option>
+                                <option value="Vitamina / Desparasitante">Vitamina / Desparasitante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Aplicación</label>
+                            <input type="date" id="vac-fecha" required>
+                        </div>
+                        <button type="submit" style="background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer;">Registrar Vacuna</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Historial Clínico y Sanitario General</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bovino ID</th>
+                                    <th>Tratamiento / Vacuna</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-vacunas">
+                                <!-- Carga dinámica -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CAMBIA ESTA URL POR LA TUYA DE RENDER
+        const API_BASE_URL = 'https://trazabilidad-backend-j10g.onrender.com';
+
+        // Manejo de navegación por pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            fetchData(tabId);
+        }
+
+        // Verificar Conexión de la Arquitectura al arrancar
+        async function checkConnection() {
+            try {
+                const response = await fetch(API_BASE_URL);
+                if(response.ok) {
+                    document.getElementById('connection-status').innerText = 'CONECTADO A RENDER';
+                    document.getElementById('connection-status').style.color = '#27ae60';
+                    fetchData('trazabilidad'); // Cargar primera tabla por defecto
+                }
+            } catch (error) {
+                document.getElementById('connection-status').innerText = 'ERROR DE ARQUITECTURA';
+                document.getElementById('connection-status').style.color = '#e74c3c';
+            }
+        }
+
+        // GET: Consultar datos del Backend en Render e insertarlos en las tablas
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+                if (!response.ok) return;
+                const data = await response.json();
+                
+                const tbody = document.getElementById(`tabla-${endpoint}`);
+                tbody.innerHTML = ''; // Limpiar
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">No hay registros en la base de datos de Aiven.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    if (endpoint === 'trazabilidad') {
+                        tr.innerHTML = `<td><b>${item.dispositivo_id || 'N/A'}</b></td><td>${item.bovino_id || 'N/A'}</td><td>${item.latitud}</td><td>${item.longitud}</td><td>${item.fecha || 'Reciente'}</td>`;
+                    } else if (endpoint === 'propietarios') {
+                        tr.innerHTML = `<td>${item.cedula}</td><td>${item.nombre}</td><td>${item.telefono || 'S/N'}</td>`;
+                    } else if (endpoint === 'fincas') {
+                        tr.innerHTML = `<td>${item.nombre}</td><td>${item.ubicacion}</td><td>${item.propietario || 'Asociación'}</td>`;
+                    } else if (endpoint === 'vacunas') {
+                        tr.innerHTML = `<td>${item.bovino_id}</td><td><span class="status-indicator">${item.tipo_vacuna}</span></td><td>${item.fecha_aplicacion}</td>`;
+                    }
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error(`Error al traer datos de ${endpoint}:`, error);
+            }
+        }
+
+        // POST: Enviar los datos del formulario al backend en Render
+        async function postData(event, endpoint) {
+            event.preventDefault();
+            let bodyData = {};
+
+            if (endpoint === 'trazabilidad') {
+                bodyData = {
+                    dispositivo_id: document.getElementById('tra-dispositivo').value,
+                    bovino_id: document.getElementById('tra-bovino').value,
+                    latitud: parseFloat(document.getElementById('tra-lat').value),
+                    longitud: parseFloat(document.getElementById('tra-lng').value)
+                };
+            } else if (endpoint === 'propietarios') {
+                bodyData = {
+                    cedula: document.getElementById('prop-cedula').value,
+                    nombre: document.getElementById('prop-nombre').value,
+                    telefono: document.getElementById('prop-telefono').value
+                };
+            } else if (endpoint === 'fincas') {
+                bodyData = {
+                    nombre: document.getElementById('finca-nombre').value,
+                    ubicacion: document.getElementById('finca-ubicacion').value,
+                    propietario_id: document.getElementById('finca-propietario').value
+                };
+            } else if (endpoint === 'vacunas') {
+                bodyData = {
+                    bovino_id: document.getElementById('vac-bovino').value,
+                    tipo_vacuna: document.getElementById('vac-tipo').value,
+                    fecha_aplicacion: document.getElementById('vac-fecha').value
+                };
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (response.ok) {
+                    alert('¡Datos guardados exitosamente en la arquitectura!');
+                    document.getElementById(`form-${endpoint}`).reset();
+                    fetchData(endpoint); // Recargar la tabla correspondiente
+                } else {
+                    alert('Error al guardar datos. Revisa la consola o las rutas del backend.');
+                }
+            } catch (error) {
+                alert('No se pudo conectar con el servidor en Render.');
+            }
+        }
+
+        // Inicializar al cargar la página
+        checkConnection();
+    </script>
+</body>
+</html>
