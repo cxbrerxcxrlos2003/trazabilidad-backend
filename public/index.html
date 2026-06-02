@@ -7,7 +7,7 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --accent-color: #d4ac0d; /* Tono dorado/charolais */
+            --accent-color: #d4ac0d; 
             --success-color: #27ae60;
             --bg-color: #f8f9fa;
             --dark-text: #2c3e50;
@@ -43,7 +43,6 @@
             padding: 0 1.5rem;
         }
 
-        /* Sistema de Pestañas */
         .tabs {
             display: flex;
             gap: 0.5rem;
@@ -79,7 +78,6 @@
             display: block;
         }
 
-        /* Formularios y Paneles */
         .panel-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -132,23 +130,6 @@
             box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
         }
 
-        btn-submit {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        /* Tablas de Datos */
         .table-container {
             overflow-x: auto;
         }
@@ -187,11 +168,10 @@
 
     <header>
         <h1>Asociación Charolais 🐂 Sistema Integral de Trazabilidad</h1>
-        <div id="connection-status" style="font-size: 0.9rem; font-weight: bold; color: var(--accent-color);">Conectando Arquitectura...</div>
+        <div id="connection-status" style="font-size: 0.9rem; font-weight: bold; color: #e74c3c;">Conectando Arquitectura...</div>
     </header>
 
     <div class="container">
-        <!-- Pestañas de Navegación -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('trazabilidad')">📡 Trazabilidad IoT</button>
             <button class="tab-btn" onclick="switchTab('propietarios')">👥 Propietarios</button>
@@ -199,7 +179,6 @@
             <button class="tab-btn" onclick="switchTab('vacunas')">💉 Vacunas e Historial</button>
         </div>
 
-        <!-- PESTAÑA 1: TRAZABILIDAD BOVINA -->
         <div id="trazabilidad" class="tab-content active">
             <div class="panel-grid">
                 <div class="card">
@@ -237,16 +216,13 @@
                                     <th>Último Envío</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-trazabilidad">
-                                <!-- Carga dinámica -->
-                            </tbody>
+                            <tbody id="tabla-trazabilidad"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PESTAÑA 2: PROPIETARIOS -->
         <div id="propietarios" class="tab-content">
             <div class="panel-grid">
                 <div class="card">
@@ -278,16 +254,13 @@
                                     <th>Teléfono</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-propietarios">
-                                <!-- Carga dinámica -->
-                            </tbody>
+                            <tbody id="tabla-propietarios"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PESTAÑA 3: FINCAS -->
         <div id="fincas" class="tab-content">
             <div class="panel-grid">
                 <div class="card">
@@ -303,8 +276,8 @@
                         </div>
                         <div class="form-group">
                             <label>Propietario Responsable</label>
-                            <select id="finca-propietario">
-                                <option value="1">Cargando propietarios...</option>
+                            <select id="finca-propietario" required>
+                                <option value="">Seleccione un propietario...</option>
                             </select>
                         </div>
                         <button type="submit" style="background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer;">Registrar Finca</button>
@@ -318,27 +291,26 @@
                                 <tr>
                                     <th>Nombre Finca</th>
                                     <th>Ubicación</th>
-                                    <th>Propietario</th>
+                                    <th>Propietario ID</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-fincas">
-                                <!-- Carga dinámica -->
-                            </tbody>
+                            <tbody id="tabla-fincas"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PESTAÑA 4: VACUNAS -->
         <div id="vacunas" class="tab-content">
             <div class="panel-grid">
                 <div class="card">
                     <h2>Control Sanitario Bovino</h2>
                     <form id="form-vacunas" onsubmit="postData(event, 'vacunas')">
                         <div class="form-group">
-                            <label>Código del Bovino</label>
-                            <input type="text" id="vac-bovino" required>
+                            <label>Código del Bovino (Arete)</label>
+                            <select id="vac-bovino" required>
+                                <option value="">Cargando bovinos registrados...</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Tipo de Vacuna / Tratamiento</label>
@@ -367,9 +339,7 @@
                                     <th>Fecha</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-vacunas">
-                                <!-- Carga dinámica -->
-                            </tbody>
+                            <tbody id="tabla-vacunas"></tbody>
                         </table>
                     </div>
                 </div>
@@ -378,27 +348,33 @@
     </div>
 
     <script>
-        // CAMBIA ESTA URL POR LA TUYA DE RENDER
-        const API_BASE_URL = 'https://trazabilidad-backend-j10g.onrender.com';
+        const API_BASE_URL = window.location.origin;
 
-        // Manejo de navegación por pestañas
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if(event) event.currentTarget.classList.add('active');
+            
             fetchData(tabId);
+            
+            if (tabId === 'fincas') {
+                actualizarDesplegablePropietarios();
+            }
+            // 🌟 CAMBIO AQUÍ: Si entra a vacunas, actualiza dinámicamente el scroll de aretes
+            if (tabId === 'vacunas') {
+                actualizarDesplegableBovinos();
+            }
         }
 
-        // Verificar Conexión de la Arquitectura al arrancar
         async function checkConnection() {
             try {
-                const response = await fetch(API_BASE_URL);
+                const response = await fetch(`${API_BASE_URL}/trazabilidad`);
                 if(response.ok) {
                     document.getElementById('connection-status').innerText = 'CONECTADO A RENDER';
                     document.getElementById('connection-status').style.color = '#27ae60';
-                    fetchData('trazabilidad'); // Cargar primera tabla por defecto
+                    fetchData('trazabilidad');
                 }
             } catch (error) {
                 document.getElementById('connection-status').innerText = 'ERROR DE ARQUITECTURA';
@@ -406,7 +382,60 @@
             }
         }
 
-        // GET: Consultar datos del Backend en Render e insertarlos en las tablas
+        async function actualizarDesplegablePropietarios() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/propietarios`);
+                if (!response.ok) return;
+                const propietarios = await response.json();
+                
+                const selectProp = document.getElementById('finca-propietario');
+                selectProp.innerHTML = '<option value="">Seleccione un propietario...</option>';
+                
+                if(propietarios.length === 0) {
+                    selectProp.innerHTML = '<option value="">Debe registrar un propietario primero</option>';
+                    return;
+                }
+
+                propietarios.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.cedula;
+                    option.text = `${p.nombre} (${p.cedula})`;
+                    selectProp.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error cargando desplegable:", error);
+            }
+        }
+
+        // 🌟 FUNCIÓN NUEVA: Obtiene las tramas de trazabilidad de Aiven y extrae los aretes únicos para el scroll
+        async function actualizarDesplegableBovinos() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/trazabilidad`);
+                if (!response.ok) return;
+                const tramas = await response.json();
+                
+                const selectBovino = document.getElementById('vac-bovino');
+                selectBovino.innerHTML = '<option value="">Seleccione un arete registrado...</option>';
+                
+                // Filtrar para obtener solo códigos de aretes únicos
+                const bovinosUnicos = [...new Set(tramas.map(t => t.bovino_id))].sort();
+
+                if(bovinosUnicos.length === 0) {
+                    selectBovino.innerHTML = '<option value="">No hay bovinos con tramas IoT en Aiven</option>';
+                    return;
+                }
+
+                bovinosUnicos.forEach(codigo => {
+                    const option = document.createElement('option');
+                    option.value = codigo;
+                    option.text = `Arete: ${codigo}`;
+                    selectBovino.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error cargando desplegable de bovinos:", error);
+            }
+        }
+
         async function fetchData(endpoint) {
             try {
                 const response = await fetch(`${API_BASE_URL}/${endpoint}`);
@@ -414,7 +443,8 @@
                 const data = await response.json();
                 
                 const tbody = document.getElementById(`tabla-${endpoint}`);
-                tbody.innerHTML = ''; // Limpiar
+                if(!tbody) return;
+                tbody.innerHTML = ''; 
 
                 if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">No hay registros en la base de datos de Aiven.</td></tr>`;
@@ -424,13 +454,13 @@
                 data.forEach(item => {
                     const tr = document.createElement('tr');
                     if (endpoint === 'trazabilidad') {
-                        tr.innerHTML = `<td><b>${item.dispositivo_id || 'N/A'}</b></td><td>${item.bovino_id || 'N/A'}</td><td>${item.latitud}</td><td>${item.longitud}</td><td>${item.fecha || 'Reciente'}</td>`;
+                        tr.innerHTML = `<td><b>${item.dispositivo_id}</b></td><td>${item.bovino_id}</td><td>${item.latitud}</td><td>${item.longitud}</td><td>${item.fecha ? new Date(item.fecha).toLocaleString() : 'Reciente'}</td>`;
                     } else if (endpoint === 'propietarios') {
                         tr.innerHTML = `<td>${item.cedula}</td><td>${item.nombre}</td><td>${item.telefono || 'S/N'}</td>`;
                     } else if (endpoint === 'fincas') {
-                        tr.innerHTML = `<td>${item.nombre}</td><td>${item.ubicacion}</td><td>${item.propietario || 'Asociación'}</td>`;
+                        tr.innerHTML = `<td>${item.nombre}</td><td>${item.ubicacion}</td><td>${item.propietario_id || 'Asociación'}</td>`;
                     } else if (endpoint === 'vacunas') {
-                        tr.innerHTML = `<td>${item.bovino_id}</td><td><span class="status-indicator">${item.tipo_vacuna}</span></td><td>${item.fecha_aplicacion}</td>`;
+                        tr.innerHTML = `<td>${item.bovino_id}</td><td><span class="status-indicator">${item.tipo_vacuna}</span></td><td>${item.fecha_aplicacion ? item.fecha_aplicacion.split('T')[0] : 'S/F'}</td>`;
                     }
                     tbody.appendChild(tr);
                 });
@@ -439,7 +469,6 @@
             }
         }
 
-        // POST: Enviar los datos del formulario al backend en Render
         async function postData(event, endpoint) {
             event.preventDefault();
             let bodyData = {};
@@ -479,18 +508,19 @@
                 });
 
                 if (response.ok) {
-                    alert('¡Datos guardados exitosamente en la arquitectura!');
+                    alert('¡Datos guardados exitosamente en Aiven!');
                     document.getElementById(`form-${endpoint}`).reset();
-                    fetchData(endpoint); // Recargar la tabla correspondiente
+                    fetchData(endpoint);
+                    if(endpoint === 'propietarios') actualizarDesplegablePropietarios();
+                    if(endpoint === 'trazabilidad') actualizarDesplegableBovinos();
                 } else {
-                    alert('Error al guardar datos. Revisa la consola o las rutas del backend.');
+                    alert('Error al guardar datos.');
                 }
             } catch (error) {
-                alert('No se pudo conectar con el servidor en Render.');
+                alert('Error de conexión con el servidor.');
             }
         }
 
-        // Inicializar al cargar la página
         checkConnection();
     </script>
 </body>
